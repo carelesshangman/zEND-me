@@ -5,49 +5,35 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
-namespace ApplicationTest\Controller;
+namespace Application\Controller;
 
-use Application\Controller\IndexController;
-use Zend\Stdlib\ArrayUtils;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
-
-class IndexControllerTest extends AbstractHttpControllerTestCase
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
+use Zend\Db\Sql\Sql;
+use Zend\Db\Adapter\Adapter;
+class IndexController extends AbstractActionController
 {
-    public function setUp()
+    public function indexAction()
     {
-        // The module configuration should still be applicable for tests.
-        // You can override configuration here with test case specific values,
-        // such as sample view templates, path stacks, module_listener_options,
-        // etc.
-        $configOverrides = [];
 
-        $this->setApplicationConfig(ArrayUtils::merge(
-            include __DIR__ . '/../../../../config/application.config.php',
-            $configOverrides
-        ));
-
-        parent::setUp();
-    }
-
-    public function testIndexActionCanBeAccessed()
-    {
-        $this->dispatch('/', 'GET');
-        $this->assertResponseStatusCode(200);
-        $this->assertModuleName('application');
-        $this->assertControllerName(IndexController::class); // as specified in router's controller name alias
-        $this->assertControllerClass('IndexController');
-        $this->assertMatchedRouteName('home');
-    }
-
-    public function testIndexActionViewModelTemplateRenderedWithinLayout()
-    {
-        $this->dispatch('/', 'GET');
-        $this->assertQuery('.container .jumbotron');
-    }
-
-    public function testInvalidRouteDoesNotCrash()
-    {
-        $this->dispatch('/invalid/route', 'GET');
-        $this->assertResponseStatusCode(404);
+        // Define the database connection parameters
+        $config = [
+            'driver' => 'Pdo_Mysql',
+            'host' => 'localhost',
+            'port' => 3308,
+            'database' => 'test_zmuesli',
+            'username' => 'jaka.german',
+            'password' => 'jaka123german',
+            'charset' => 'utf8',
+        ];
+        $dbAdapter = new Adapter($config);
+        $statement = $dbAdapter->query("select * from ka_menu_item where parent_id is null", Adapter::QUERY_MODE_EXECUTE);
+        $result = $statement->toArray();
+        $topMenu = $result;
+        #print_r($row);
+        return [
+            'topMenu' => $topMenu,
+            #'botMenu' => $botMenu
+        ];
     }
 }

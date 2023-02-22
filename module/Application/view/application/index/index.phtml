@@ -1,5 +1,7 @@
-<ul class="styled-list">
-    <?php foreach ($result as $row) { ?>
-        <li><?php echo $row['title']; ?></li>
-    <?php } ?>
-</ul>
+<a>
+    <?php
+    foreach ($this->topMenu as $item => $value){
+        echo $value['name']." ";
+    }
+    ?>
+</a>
